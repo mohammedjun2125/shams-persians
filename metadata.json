@@ -1,0 +1,6 @@
+{
+  "name": "Shams Persians",
+  "description": "All type of Persian cats available in Hyderabad. Open 24 Hours with 24/7 home delivery across Banjara Hills, Jubilee Hills, Secunderabad, Begumpet, Old City, Gachibowli, Kukatpally, and all Hyderabad locations.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
