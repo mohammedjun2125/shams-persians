@@ -47,7 +47,6 @@ export default function Footer({ onNavClick, onSelectLocation }: FooterProps) {
               <button onClick={() => onNavClick("kittens")} className="hover:text-[#B68D6C] text-left transition-colors font-semibold text-[#B68D6C] cursor-pointer">Available Kittens</button>
               <button onClick={() => onNavClick("about")} className="hover:text-[#B68D6C] text-left transition-colors cursor-pointer">About Us</button>
               <button onClick={() => onNavClick("services")} className="hover:text-[#B68D6C] text-left transition-colors cursor-pointer">Services</button>
-              <button onClick={() => onNavClick("locations")} className="hover:text-[#B68D6C] text-left transition-colors cursor-pointer">Service Areas</button>
               <button onClick={() => onNavClick("reviews")} className="hover:text-[#B68D6C] text-left transition-colors cursor-pointer">5.0 Reviews</button>
               <button onClick={() => onNavClick("gallery")} className="hover:text-[#B68D6C] text-left transition-colors cursor-pointer">Gallery</button>
               <button onClick={() => onNavClick("faq")} className="hover:text-[#B68D6C] text-left transition-colors cursor-pointer">FAQs</button>

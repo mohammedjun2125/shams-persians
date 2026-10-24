@@ -36,7 +36,6 @@ export default function Header({ activeSection, onNavClick }: HeaderProps) {
   const navItems = [
     { label: "Home", id: "home" },
     { label: "Available Kittens", id: "kittens" },
-    { label: "Service Areas", id: "locations" },
     { label: "About Us", id: "about" },
     { label: "Services", id: "services" },
     { label: "Gallery", id: "gallery" },
