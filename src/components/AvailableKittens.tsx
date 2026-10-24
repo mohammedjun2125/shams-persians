@@ -98,9 +98,10 @@ Please share live photos or arrange a live video inspection!`;
                 <div className="relative aspect-[4/3] overflow-hidden bg-beige/12">
                   <img
                     src={kit.image}
-                    alt={kit.name}
+                    alt={`${kit.name} - ${kit.breed} cat available in Hyderabad at Shams Persians`}
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     referrerPolicy="no-referrer"
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-charcoal/65 via-transparent to-transparent opacity-80" />
 
@@ -218,7 +219,7 @@ Please share live photos or arrange a live video inspection!`;
                 <div className="relative aspect-[3/2] overflow-hidden bg-charcoal">
                   <img
                     src={selectedKitten.image}
-                    alt={selectedKitten.name}
+                    alt={`${selectedKitten.name} - Pedigree ${selectedKitten.breed} cat at Shams Persians Hyderabad`}
                     className="w-full h-full object-cover"
                     referrerPolicy="no-referrer"
                   />

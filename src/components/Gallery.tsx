@@ -37,7 +37,7 @@ export default function Gallery() {
             Our Visual Collection
           </span>
           <h2 className="text-3xl sm:text-4xl font-heading font-extrabold text-charcoal mt-4 tracking-tight">
-            SK Cattery Photo Gallery
+            Shams Persians Photo Gallery
           </h2>
           <div className="w-16 h-1.5 bg-softbrown rounded-full mt-3 mx-auto" />
           <p className="mt-4 text-sm sm:text-base text-charcoal/65">

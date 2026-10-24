@@ -1,0 +1,11 @@
+# Robots.txt for Shams Persians Hyderabad
+# Persian Cat Cattery & 24/7 Delivery Service in Hyderabad
+User-agent: *
+Allow: /
+
+# Disallow transient or build paths if any
+Disallow: /api/
+Disallow: /private/
+
+# Canonical XML Sitemap
+Sitemap: https://shamspersians.com/sitemap.xml

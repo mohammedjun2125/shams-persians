@@ -115,7 +115,7 @@ export default function Hero({ onExploreClick, onLocationsClick }: HeroProps) {
                 className="mt-5 text-sm sm:text-base text-charcoal/75 leading-relaxed max-w-xl font-sans font-medium"
                 id="hero-subheading"
               >
-                Purebred Doll Face &amp; Punch Face Persian kittens, plus Himalayan points. Healthy, vaccinated, cage-free kittens with safe home delivery to Banjara Hills, Jubilee Hills, Secunderabad, Begumpet, Old City, and all over Hyderabad.
+                Purebred Doll Face &amp; Punch Face Persian kittens, plus Himalayan points. Healthy, vaccinated, cage-free kittens with safe 24/7 doorstep delivery all over Hyderabad.
               </motion.p>
 
               {/* Action Buttons */}
@@ -147,20 +147,6 @@ export default function Hero({ onExploreClick, onLocationsClick }: HeroProps) {
                 </a>
               </div>
 
-              {/* Quick Area Coverage Pill */}
-              <div className="mt-6 pt-5 border-t border-beige/50 flex flex-wrap items-center gap-2 text-xs text-charcoal/70">
-                <MapPin className="h-3.5 w-3.5 text-softbrown shrink-0" />
-                <span className="font-bold text-charcoal">Delivery across:</span>
-                <span>Banjara Hills • Jubilee Hills • Secunderabad • Begumpet • Old City • Gachibowli • Kukatpally</span>
-                {onLocationsClick && (
-                  <button
-                    onClick={onLocationsClick}
-                    className="text-softbrown font-bold underline hover:text-charcoal ml-1 cursor-pointer"
-                  >
-                    View All 16 Areas →
-                  </button>
-                )}
-              </div>
             </div>
           </motion.div>
 

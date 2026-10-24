@@ -19,9 +19,61 @@ import LocationDetailPage from "./components/LocationDetailPage";
 import { HYDERABAD_LOCATIONS } from "./locationsData";
 import { AnimatePresence, motion } from "motion/react";
 
+const CANONICAL_ORIGIN = "https://shamspersians.com";
+
+function parseCurrentUrl(): { page: string; locationSlug: string } {
+  if (typeof window === "undefined") {
+    return { page: "home", locationSlug: "banjara-hills" };
+  }
+
+  const rawPath = window.location.pathname.toLowerCase().replace(/\/$/, "");
+  const hash = window.location.hash.toLowerCase().replace(/^#\/?/, "");
+  const params = new URLSearchParams(window.location.search);
+  const locParam = params.get("location") || params.get("area");
+
+  if (locParam) {
+    const matched = HYDERABAD_LOCATIONS.find((l) => l.slug === locParam.toLowerCase());
+    if (matched) return { page: "location-detail", locationSlug: matched.slug };
+  }
+
+  // Check matching location slugs in path or hash
+  for (const loc of HYDERABAD_LOCATIONS) {
+    if (
+      rawPath === `/persian-cats-${loc.slug}` ||
+      rawPath === `/location/${loc.slug}` ||
+      rawPath === `/locations/${loc.slug}` ||
+      hash === `persian-cats-${loc.slug}` ||
+      hash === loc.slug
+    ) {
+      return { page: "location-detail", locationSlug: loc.slug };
+    }
+  }
+
+  // Check standard static routes
+  const cleanPath = rawPath.replace(/^\//, "");
+  const validPages = ["kittens", "locations", "service-areas", "about", "services", "gallery", "reviews", "faq", "contact"];
+  if (validPages.includes(cleanPath)) {
+    if (cleanPath === "service-areas") {
+      return { page: "locations", locationSlug: "banjara-hills" };
+    }
+    return { page: cleanPath, locationSlug: "banjara-hills" };
+  }
+
+  return { page: "home", locationSlug: "banjara-hills" };
+}
+
+function getPathForState(page: string, locationSlug?: string): string {
+  if (page === "home") return "/";
+  if (page === "location-detail" && locationSlug) {
+    return `/persian-cats-${locationSlug}`;
+  }
+  return `/${page}`;
+}
+
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<string>("home");
-  const [selectedLocationSlug, setSelectedLocationSlug] = useState<string>("banjara-hills");
+  const initialRoute = parseCurrentUrl();
+  const [currentPage, setCurrentPage] = useState<string>(initialRoute.page);
+  const [selectedLocationSlug, setSelectedLocationSlug] = useState<string>(initialRoute.locationSlug);
   const [initialLoading, setInitialLoading] = useState<boolean>(true);
   const [transitionLoading, setTransitionLoading] = useState<boolean>(false);
 
@@ -32,13 +84,29 @@ export default function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  // Dynamic SEO Title and Metadata updates for Hyderabad search rankings
+  // Listen for browser Back/Forward (popstate) navigation
+  useEffect(() => {
+    const handlePopState = () => {
+      const route = parseCurrentUrl();
+      setCurrentPage(route.page);
+      if (route.locationSlug) {
+        setSelectedLocationSlug(route.locationSlug);
+      }
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
+  // Dynamic SEO Title, Description, Keywords, Canonical, OpenGraph & Structured Data
   useEffect(() => {
     let title = "Shams Persians Hyderabad | Persian Cats Near Me | Cattery 5.0★";
     let desc =
       "Shams Persians Hyderabad: All type of Persian cats available. 5.0 Google rated cattery. Buy healthy doll face and punch face Persian kittens with safe home delivery in Banjara Hills, Jubilee Hills, Secunderabad, Begumpet, Gachibowli, Old City, and all over Hyderabad. Call 078424 96805.";
     let keywords =
       "persian cats near me, persian cats hyderabad, shams persians, buy persian cat hyderabad, persian kittens for sale banjara hills, jubilee hills persian cats, secunderabad cat cattery, begumpet persian kittens, old city persian cat, doll face persian kitten hyderabad, punch face persian cat price hyderabad, cattery hyderabad";
+
+    const currentLoc = HYDERABAD_LOCATIONS.find((l) => l.slug === selectedLocationSlug);
 
     switch (currentPage) {
       case "home":
@@ -61,11 +129,10 @@ export default function App() {
           "persian cats near me, persian cat delivery hyderabad, cattery banjara hills, jubilee hills cat breeders, secunderabad cat cattery, begumpet persian kittens";
         break;
       case "location-detail": {
-        const loc = HYDERABAD_LOCATIONS.find((l) => l.slug === selectedLocationSlug);
-        if (loc) {
-          title = loc.metaTitle;
-          desc = loc.metaDescription;
-          keywords = loc.popularSearchKeywords.join(", ");
+        if (currentLoc) {
+          title = currentLoc.metaTitle;
+          desc = currentLoc.metaDescription;
+          keywords = currentLoc.popularSearchKeywords.join(", ");
         } else {
           title = "Persian Cats Near Me in Hyderabad | Shams Persians";
         }
@@ -115,9 +182,10 @@ export default function App() {
         break;
     }
 
+    // 1. Document Title
     document.title = title;
 
-    // Update Meta Description
+    // 2. Meta Description
     let metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
       metaDesc.setAttribute("content", desc);
@@ -128,7 +196,7 @@ export default function App() {
       document.head.appendChild(metaDesc);
     }
 
-    // Update Meta Keywords
+    // 3. Meta Keywords
     let metaKeys = document.querySelector('meta[name="keywords"]');
     if (metaKeys) {
       metaKeys.setAttribute("content", keywords);
@@ -137,6 +205,101 @@ export default function App() {
       metaKeys.setAttribute("name", "keywords");
       metaKeys.setAttribute("content", keywords);
       document.head.appendChild(metaKeys);
+    }
+
+    // 4. Canonical URL Link Tag
+    const pagePath = getPathForState(currentPage, selectedLocationSlug);
+    const canonicalUrl = `${CANONICAL_ORIGIN}${pagePath}`;
+    let canonicalLink = document.querySelector('link[rel="canonical"]');
+    if (canonicalLink) {
+      canonicalLink.setAttribute("href", canonicalUrl);
+    } else {
+      canonicalLink = document.createElement("link");
+      canonicalLink.setAttribute("rel", "canonical");
+      canonicalLink.setAttribute("href", canonicalUrl);
+      document.head.appendChild(canonicalLink);
+    }
+
+    // 5. OpenGraph Tags
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) ogTitle.setAttribute("content", title);
+    const ogDesc = document.querySelector('meta[property="og:description"]');
+    if (ogDesc) ogDesc.setAttribute("content", desc);
+    let ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl) {
+      ogUrl.setAttribute("content", canonicalUrl);
+    } else {
+      ogUrl = document.createElement("meta");
+      ogUrl.setAttribute("property", "og:url");
+      ogUrl.setAttribute("content", canonicalUrl);
+      document.head.appendChild(ogUrl);
+    }
+
+    // 6. Twitter Card Tags
+    const twTitle = document.querySelector('meta[name="twitter:title"]');
+    if (twTitle) twTitle.setAttribute("content", title);
+    const twDesc = document.querySelector('meta[name="twitter:description"]');
+    if (twDesc) twDesc.setAttribute("content", desc);
+
+    // 7. Dynamic Route-Specific Schema (Breadcrumbs & Hyperlocal LocalBusiness)
+    const existingDynamicScript = document.getElementById("dynamic-route-schema");
+    if (existingDynamicScript) {
+      existingDynamicScript.remove();
+    }
+
+    if (currentPage === "location-detail" && currentLoc) {
+      const script = document.createElement("script");
+      script.id = "dynamic-route-schema";
+      script.type = "application/ld+json";
+      const schemaData = {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "BreadcrumbList",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Home",
+                "item": `${CANONICAL_ORIGIN}/`
+              },
+              {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "Hyderabad Locations",
+                "item": `${CANONICAL_ORIGIN}/locations`
+              },
+              {
+                "@type": "ListItem",
+                "position": 3,
+                "name": currentLoc.name,
+                "item": canonicalUrl
+              }
+            ]
+          },
+          {
+            "@type": ["LocalBusiness", "PetStore"],
+            "@id": `${canonicalUrl}#service`,
+            "name": `Shams Persians - ${currentLoc.name}`,
+            "description": currentLoc.metaDescription,
+            "telephone": "+917842496805",
+            "openingHours": "Mo-Su 00:00-23:59",
+            "areaServed": {
+              "@type": "AdministrativeArea",
+              "name": `${currentLoc.name}, Hyderabad`
+            },
+            "aggregateRating": {
+              "@type": "AggregateRating",
+              "ratingValue": "5.0",
+              "bestRating": "5",
+              "worstRating": "1",
+              "ratingCount": "3"
+            }
+          }
+        ]
+      };
+      script.textContent = JSON.stringify(schemaData);
+      document.head.appendChild(script);
     }
   }, [currentPage, selectedLocationSlug]);
 
@@ -150,16 +313,26 @@ export default function App() {
       return;
     }
 
+    const nextPath = getPathForState(pageId);
+    if (window.location.pathname !== nextPath) {
+      window.history.pushState({ page: pageId }, "", nextPath);
+    }
+
     setTransitionLoading(true);
     window.scrollTo(0, 0);
 
     setTimeout(() => {
       setCurrentPage(pageId);
       setTransitionLoading(false);
-    }, 200);
+    }, 180);
   };
 
   const handleSelectLocation = (slug: string) => {
+    const nextPath = getPathForState("location-detail", slug);
+    if (window.location.pathname !== nextPath) {
+      window.history.pushState({ page: "location-detail", slug }, "", nextPath);
+    }
+
     setSelectedLocationSlug(slug);
     setTransitionLoading(true);
     window.scrollTo(0, 0);
@@ -167,7 +340,7 @@ export default function App() {
     setTimeout(() => {
       setCurrentPage("location-detail");
       setTransitionLoading(false);
-    }, 200);
+    }, 180);
   };
 
   return (
@@ -192,7 +365,7 @@ export default function App() {
             transition={{ duration: 0.35, ease: "easeOut" }}
             className="min-h-[75vh]"
           >
-            {/* HOME PAGE VIEW */}
+            {/* HOME PAGE VIEW - Clean layout with no locality name lists or keyword blocks */}
             {currentPage === "home" && (
               <>
                 <Hero
@@ -201,8 +374,6 @@ export default function App() {
                 />
                 <TrustBar />
                 <AvailableKittens />
-                {/* Hyderabad Locations Grid on Home Page */}
-                <LocalSeoAreas onSelectLocation={handleSelectLocation} />
                 <WhyChooseUs />
                 <About />
                 <ReviewSection />
@@ -215,7 +386,6 @@ export default function App() {
             {currentPage === "kittens" && (
               <>
                 <AvailableKittens />
-                <LocalSeoAreas onSelectLocation={handleSelectLocation} />
               </>
             )}
 
@@ -251,7 +421,6 @@ export default function App() {
               <>
                 <Services />
                 <TrustBar />
-                <LocalSeoAreas onSelectLocation={handleSelectLocation} />
               </>
             )}
 

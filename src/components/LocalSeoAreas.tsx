@@ -21,7 +21,7 @@ export default function LocalSeoAreas({ onSelectLocation }: LocalSeoAreasProps) 
   });
 
   return (
-    <section id="hyderabad-locations" className="py-20 bg-[#FFFBF7] relative overflow-hidden">
+    <section id="hyderabad-locations" className="py-16 sm:py-20 bg-[#FFFBF7] relative overflow-hidden">
       {/* Background Decorative Accents */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-peach/15 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-beige/25 rounded-full blur-3xl pointer-events-none" />

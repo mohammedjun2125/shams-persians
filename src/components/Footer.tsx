@@ -45,9 +45,9 @@ export default function Footer({ onNavClick, onSelectLocation }: FooterProps) {
             <div className="grid grid-cols-2 gap-2 text-xs sm:text-sm text-[#F5EBDD]/70">
               <button onClick={() => onNavClick("home")} className="hover:text-[#B68D6C] text-left transition-colors cursor-pointer">Home</button>
               <button onClick={() => onNavClick("kittens")} className="hover:text-[#B68D6C] text-left transition-colors font-semibold text-[#B68D6C] cursor-pointer">Available Kittens</button>
-              <button onClick={() => onNavClick("locations")} className="hover:text-[#B68D6C] text-left transition-colors font-bold text-amber-300 cursor-pointer">Hyderabad Areas</button>
               <button onClick={() => onNavClick("about")} className="hover:text-[#B68D6C] text-left transition-colors cursor-pointer">About Us</button>
               <button onClick={() => onNavClick("services")} className="hover:text-[#B68D6C] text-left transition-colors cursor-pointer">Services</button>
+              <button onClick={() => onNavClick("locations")} className="hover:text-[#B68D6C] text-left transition-colors cursor-pointer">Service Areas</button>
               <button onClick={() => onNavClick("reviews")} className="hover:text-[#B68D6C] text-left transition-colors cursor-pointer">5.0 Reviews</button>
               <button onClick={() => onNavClick("gallery")} className="hover:text-[#B68D6C] text-left transition-colors cursor-pointer">Gallery</button>
               <button onClick={() => onNavClick("faq")} className="hover:text-[#B68D6C] text-left transition-colors cursor-pointer">FAQs</button>
@@ -88,30 +88,6 @@ export default function Footer({ onNavClick, onSelectLocation }: FooterProps) {
             </div>
           </div>
 
-        </div>
-
-        {/* Popular Hyderabad SEO Location Links Grid */}
-        <div className="py-6 border-b border-[#F5EBDD]/10">
-          <p className="text-[11px] font-heading font-extrabold text-[#FFF8F0] uppercase tracking-wider mb-2.5">
-            Persian Cats Near Me – Hyderabad Locations:
-          </p>
-          <div className="flex flex-wrap gap-x-3 gap-y-1.5 text-[11px] text-[#F5EBDD]/60">
-            {HYDERABAD_LOCATIONS.map((loc) => (
-              <button
-                key={loc.slug}
-                onClick={() => {
-                  if (onSelectLocation) {
-                    onSelectLocation(loc.slug);
-                  } else {
-                    onNavClick("locations");
-                  }
-                }}
-                className="hover:text-[#B68D6C] transition-colors cursor-pointer underline-offset-2 hover:underline"
-              >
-                Persian Cats {loc.name}
-              </button>
-            ))}
-          </div>
         </div>
 
         {/* Bottom copyright coordinates */}

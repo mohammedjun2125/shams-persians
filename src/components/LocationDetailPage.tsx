@@ -243,8 +243,9 @@ export default function LocationDetailPage({
                   >
                     <img
                       src={kitten.image}
-                      alt={kitten.name}
+                      alt={`${kitten.name} - Persian kitten available for delivery to ${location.name}, Hyderabad`}
                       className="w-20 h-20 rounded-xl object-cover shrink-0"
+                      loading="lazy"
                     />
                     <div className="flex flex-col justify-between">
                       <div>

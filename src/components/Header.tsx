@@ -23,10 +23,20 @@ export default function Header({ activeSection, onNavClick }: HeaderProps) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isOpen) {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen]);
+
   const navItems = [
     { label: "Home", id: "home" },
     { label: "Available Kittens", id: "kittens" },
-    { label: "Hyderabad Locations", id: "locations" },
+    { label: "Service Areas", id: "locations" },
     { label: "About Us", id: "about" },
     { label: "Services", id: "services" },
     { label: "Gallery", id: "gallery" },
@@ -126,6 +136,8 @@ export default function Header({ activeSection, onNavClick }: HeaderProps) {
                 className="p-2 rounded-xl text-charcoal hover:bg-beige/40 focus:outline-none transition-colors cursor-pointer"
                 id="mobile-menu-toggle"
                 aria-label="Toggle menu"
+                aria-expanded={isOpen}
+                aria-controls="mobile-navigation-drawer"
               >
                 {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
               </button>
@@ -147,6 +159,7 @@ export default function Header({ activeSection, onNavClick }: HeaderProps) {
               />
 
               <motion.div
+                id="mobile-navigation-drawer"
                 initial={{ opacity: 0, y: -12, scale: 0.98 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -12, scale: 0.98 }}
